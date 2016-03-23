@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -224,20 +223,8 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 	}
 
 	public void onRefresh(final SwipeToLoadLayout swipeToLoadLayout) {
-		scanVideoFileTask.setListener(null);
-		scanVideoFileTask.setListener(new BaseScanVideoFileTask.Callback() {
-			@Override
-			public void finish() {
-				new Handler(Looper.getMainLooper()).post(new Runnable() {
-					@Override
-					public void run() {
-						loadFirstPageData();
-						swipeToLoadLayout.setRefreshing(false);
-					}
-				});
-			}
-		});
-
+		loadFirstPageData();
+		swipeToLoadLayout.setRefreshing(false);
 		executeScanTask();
 	}
 
