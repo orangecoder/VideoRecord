@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <com.orangecoder.videorecord.camera.view.CameraPreviewLayout
+        android:id="@+id/layout_camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <include
+        android:id="@+id/layout_camera_helpline"
+        layout="@layout/view_recordactivity_helpline" />
+    <include
+        android:id="@+id/layout_camera_headtool"
+        layout="@layout/view_recordactivity_head_tool"/>
+    <include
+        android:id="@+id/layout_camera_recordtimer"
+        layout="@layout/view_recordactivity_recordtimer" />
+    <include
+        android:id="@+id/layout_camera_bottom"
+        layout="@layout/view_recordactivity_bottom" />
+    <include
+        android:id="@+id/layout_camera_countdown"
+        layout="@layout/view_recordactivity_countdown" />
+</RelativeLayout>

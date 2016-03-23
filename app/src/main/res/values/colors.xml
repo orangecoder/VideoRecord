@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="actionbar_bg">#26252f</color>
+
+    <color name="colorClick">#50ffffff</color>
+    <color name="tab_top_text_select">#ffffff</color>
+    <color name="tab_top_text_unSelect">#8fffffff</color>
+    <color name="color_background_default">#26252f</color>
+</resources>
