@@ -15,9 +15,9 @@ limitations under the License.
  */
 package com.orangecoder.videorecord.view;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;

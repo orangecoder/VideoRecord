@@ -23,15 +23,13 @@ public abstract class BaseScanVideoFileTask implements Runnable {
     protected Context mContext;
 
     private Callback mCallback;
-    public void setListener(Callback callback){
-        mCallback = callback;
-    }
     public interface Callback {
         void finish();
     }
 
-    public BaseScanVideoFileTask(Context context) {
+    public BaseScanVideoFileTask(Context context, Callback callback) {
         mContext = context;
+        mCallback = callback;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.orangecoder.videorecord.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -49,7 +50,7 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 	private LocalVideoDBManager mDbManager; // 我的视频数据库表管理器
 	private HandlerThread handlerThread;
 	private Handler mVideoScanHandler;
-	private BaseScanVideoFileTask scanVideoFileTask;
+	public Boolean isMyCaptureVideoLoading = false, isSystemVideoLoading = false;
 
 	public MediaActivityAdapter(Context context, int currentFragment) {
 		super(context);
@@ -66,11 +67,9 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 		switch (fragmentType) {
 			case BaseMediaFragment.FRAGMENT_DRAFTBOX:
 				mDbManager = new LocalVideoDataTableManager(context);
-				scanVideoFileTask = new ScanMyCaptureVideoFileTask(context);
 				break;
 			case BaseMediaFragment.FRAGMENT_PHONEALBUM:
 				mDbManager = new SystemVideoDataTableManager(context);
-				scanVideoFileTask = new ScanSystemVideoFileTask(context);
 				break;
 		}
 	}
@@ -225,7 +224,6 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 	public void onRefresh(final SwipeToLoadLayout swipeToLoadLayout) {
 		loadFirstPageData();
 		swipeToLoadLayout.setRefreshing(false);
-		executeScanTask();
 	}
 
 	public void onLoadMore(final SwipeToLoadLayout swipeToLoadLayout) {
@@ -240,6 +238,11 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 		List<LocalVideoData> noExistVideos = new ArrayList<LocalVideoData>();
 		for (LocalVideoData video : localVideoDatas) {
 			if(!video.isDataExist()) {
+				File videoThumbnail = new File(video.getVideoImgPath());
+				if(videoThumbnail.exists()) {
+					videoThumbnail.delete();
+				}
+				mDbManager.delete(video);
 				noExistVideos.add(video);
 			}
 		}
@@ -284,14 +287,31 @@ public class MediaActivityAdapter extends BaseAdapter<LocalVideoData> {
 		}
 	}
 
-	private void executeScanTask() {
-		mVideoScanHandler.removeCallbacks(scanVideoFileTask);
-		mVideoScanHandler.post(scanVideoFileTask);
+	public void executeScanTask(Cursor cursor) {
+		if(cursor == null) {
+			mVideoScanHandler.post(new ScanMyCaptureVideoFileTask(mContext, new BaseScanVideoFileTask.Callback() {
+				@Override
+				public void finish() {
+					isMyCaptureVideoLoading = false;
+				}
+			}));
+		}else {
+			mVideoScanHandler.post(new ScanSystemVideoFileTask(mContext, cursor, new BaseScanVideoFileTask.Callback() {
+				@Override
+				public void finish() {
+					isSystemVideoLoading = false;
+				}
+			}));
+		}
 	}
 
 	public void releaseResource() {
 		if (handlerThread != null) {
 			handlerThread.quit();
+		}
+
+		if(mVideoScanHandler != null) {
+			mVideoScanHandler.removeCallbacksAndMessages(null);
 		}
 
 		if (newVideos!=null && newVideos.size()>0) {

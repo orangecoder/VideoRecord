@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class ScanMyCaptureVideoFileTask extends BaseScanVideoFileTask {
 
-    public ScanMyCaptureVideoFileTask(Context context) {
-        super(context);
+    public ScanMyCaptureVideoFileTask(Context context, Callback callback) {
+        super(context, callback);
     }
 
     @Override
@@ -26,6 +26,8 @@ public class ScanMyCaptureVideoFileTask extends BaseScanVideoFileTask {
         List<File> localvideo = FileUtil.getAllFilesByFormat(mContext,
                 FilePathConfig.PATH_LOCALVIDEO, FilePathConfig.FILETYPE_VIDEO);
 
+        System.out.println("localvideo num:"+localvideo.size());
+
         if(localvideo!=null && localvideo.size()>0)
         {
             for (File videoFile : localvideo) {
@@ -33,11 +35,6 @@ public class ScanMyCaptureVideoFileTask extends BaseScanVideoFileTask {
                 //获取文件名
                 String filename = getFileName(videoFile);
                 if(filename == null) {
-                    continue;
-                }
-
-                //删除视频长度小于2秒的视频
-                if(!checkVideoLength(videoFile.getAbsolutePath())) {
                     continue;
                 }
 

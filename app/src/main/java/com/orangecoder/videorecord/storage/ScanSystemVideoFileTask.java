@@ -30,8 +30,11 @@ public class ScanSystemVideoFileTask extends BaseScanVideoFileTask{
 			MediaStore.Video.Media.DATE_ADDED,
 	};
 
-	public ScanSystemVideoFileTask(Context context) {
-		super(context);
+	private Cursor cursor;
+
+	public ScanSystemVideoFileTask(Context context, Cursor cursor, Callback callback) {
+		super(context, callback);
+		this.cursor = cursor;
 	}
 
 	@Override
@@ -64,15 +67,16 @@ public class ScanSystemVideoFileTask extends BaseScanVideoFileTask{
 	}
 
 	private List<SystemVideo> getSystemVideos(Context context) {
-		//获取本地视频
-        Cursor cursor = ((Activity) context).managedQuery(
-        		MediaStore.Video.Media.EXTERNAL_CONTENT_URI, 
+		if(cursor == null) {
+			cursor = ((Activity) context).managedQuery(
+        		MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
         		mediaColumns,
 				null,
 				null,
 				null);
-          
-        ArrayList<SystemVideo> videoList = new ArrayList<SystemVideo>();  
+		}
+
+        ArrayList<SystemVideo> videoList = new ArrayList<SystemVideo>();
         String mimeType;
         String filepath;
 
@@ -112,8 +116,8 @@ public class ScanSystemVideoFileTask extends BaseScanVideoFileTask{
 	                videoList.add(info);
             	}
             }while(cursor.moveToNext());  
-        }  
-	          
+        }
+
 		return videoList;
 	}
 

@@ -1,10 +1,10 @@
 package com.orangecoder.videorecord.fragment;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

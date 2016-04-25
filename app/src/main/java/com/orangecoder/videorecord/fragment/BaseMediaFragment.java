@@ -1,6 +1,11 @@
 package com.orangecoder.videorecord.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.widget.AbsListView;
 import android.widget.GridView;
@@ -18,7 +23,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
-public class BaseMediaFragment extends LazyFragment implements OnRefreshListener, OnLoadMoreListener {
+public class BaseMediaFragment extends LazyFragment implements OnRefreshListener, OnLoadMoreListener,
+		LoaderManager.LoaderCallbacks<Cursor> {
+	private static final String TAG = BaseMediaFragment.class.getName();
 	public static final String KEY_FRAGMENT = "fragment";
 	public static final int FRAGMENT_DRAFTBOX = 0;
 	public static final int FRAGMENT_PHONEALBUM = 1;
@@ -87,6 +94,7 @@ public class BaseMediaFragment extends LazyFragment implements OnRefreshListener
 				swipeToLoadLayout.setRefreshing(true);
 			}
 		});
+
 	}
 
 	@Override
@@ -108,20 +116,49 @@ public class BaseMediaFragment extends LazyFragment implements OnRefreshListener
 	}
 
 	@Override
-	public void onTrimMemory(int level) {
-		super.onTrimMemory(level);
-		ImageLoader.getInstance().clearMemoryCache();
-	}
-
-	@Override
 	public void onRefresh() {
-		adapter.onRefresh(swipeToLoadLayout);
+		switch (currentFragment) {
+			case FRAGMENT_DRAFTBOX:
+				if(!adapter.isMyCaptureVideoLoading) {
+					adapter.isMyCaptureVideoLoading = true;
+					adapter.onRefresh(swipeToLoadLayout);
+					adapter.executeScanTask(null);
+				}else {
+					swipeToLoadLayout.setRefreshing(false);
+				}
+				break;
+			case FRAGMENT_PHONEALBUM:
+				if(!adapter.isSystemVideoLoading) {
+					adapter.isSystemVideoLoading = true;
+					adapter.onRefresh(swipeToLoadLayout);
+					getLoaderManager().initLoader(1, null, this);
+				}else {
+					swipeToLoadLayout.setRefreshing(false);
+				}
+				break;
+		}
 	}
 
 	@Override
 	public void onLoadMore() {
 		adapter.onLoadMore(swipeToLoadLayout);
 	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(getContext(), MediaStore.Video.Media.getContentUri("external"), null, null, null,
+				"UPPER(" + MediaStore.Video.Media.DATA + ")");
+	}
+
+	@Override
+	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+		adapter.executeScanTask(data);
+	}
+
+	@Override
+	public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+	}
+
 
 	public static class BaseMediaFragmentEvent {
 

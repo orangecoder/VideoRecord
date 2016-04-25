@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public abstract class BaseAdapter<ItemType> extends android.widget.BaseAdapter {
 
-    private Context mContext = null;
+    public Context mContext = null;
     private ArrayList<ItemType> mList = new ArrayList<ItemType>();
     private LayoutInflater mLayoutInflater = null;
 
